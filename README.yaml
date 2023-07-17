@@ -7,7 +7,9 @@
                     https://aka.ms/vs/17/release/vc_redist.x64.exe
                 #// 以下に続きます
             その他の場合:
-                - https://www.virtualbox.org/ >> Download VirtualBox X.X >> Windows hosts
+                - https://www.virtualbox.org/ >> Download VirtualBox X.X >> VirtualBox older builds >>
+                    VirtualBox 7.0 >> (VirtualBox 7.0.6) ​Windows hosts
+                    #// VirtualBox 7.0.8 では動作しません。Windows との共有フォルダーが使えないため
                 - ダウンロードしたファイル（例：VirtualBox-7.0.6-155176-Win.exe）を開きます
                 - インストール オプションはデフォルトを使用
                 - ドライバーはインストールします
