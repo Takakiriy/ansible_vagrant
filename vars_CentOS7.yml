@@ -1,0 +1,2 @@
+my_hosts: centos7_51
+MySQL_URL: https://repo.mysql.com//mysql80-community-release-el7-7.noarch.rpm

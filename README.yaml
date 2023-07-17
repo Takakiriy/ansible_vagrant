@@ -1,0 +1,102 @@
+インストールします:
+    各種プラットフォームをインストールします:
+        VirtualBox をインストールします:
+            Windows 11 の場合:
+                Microsoft Visual C++ Redistributable Package をインストールします:
+                    #ref: https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170
+                    https://aka.ms/vs/17/release/vc_redist.x64.exe
+                #// 以下に続きます
+            その他の場合:
+                - https://www.virtualbox.org/ >> Download VirtualBox X.X >> Windows hosts
+                - ダウンロードしたファイル（例：VirtualBox-7.0.6-155176-Win.exe）を開きます
+                - インストール オプションはデフォルトを使用
+                - ドライバーはインストールします
+        Vagrant をインストールします:
+            - https://www.vagrantup.com/downloads.html >> Windows（タブ）>> AMD64(64bit) または I686(32bit)
+            - AMD64 か I686 かは右記の PowerShell で確認できます >> gci env:PROCESSOR_ARCHITECTURE
+            - ダウンロードしたファイル（例：vagrant_2.3.7_windows_amd64.msi）を開きます
+            - インストール オプションはデフォルトを使用
+            - PC を再起動します
+        Git for Windows をインストールします:  #// Git bash を使うため
+            - https://git-scm.com/ >> Downloads >> Windows
+            - ダウンロードしたファイル（例：Git-2.39.2-64-bit.exe）を開く
+            - Next を9回押す
+            - Configuring the line ending conversions: Checkout as-is, commit as-is
+            - 他のインストール オプションはデフォルトを使用
+        Visual Studio Code をインストールします:
+            - https://code.visualstudio.com/
+            - ダウンロードしたファイル（例：VSCodeUserSetup-x64-1.76.0.exe）を開きます
+            - インストール オプションはデフォルトを使用
+            - （推奨）VSCode (Visual Studio Code をタスクバーにピン止めします:
+            - （推奨）Ctrl + S キーを押したときに全てのファイルを保存するように設定します: |
+                VSCode >> File >> Preferences >> Keyboard Shortcuts >> save all （と入力） >>
+                    File: Save All （をダブルクリック） >> Ctrl + S キー >> Enter キー
+            - 下記の拡張機能(Extensions)をインストールします:
+                - Remote Development
+                - Copy Relative Path Posix  #// Copy Relative Path (POSIX) というメニューが追加されます
+        Visual Studio Code で Git bash シェルを開きます:
+            Visual Studio Code で プロジェクト フォルダーを開きます:
+                - VSCode >> File >> Open Folder ... >> __Project__  #または
+                - (shell) code __Project__
+            Git bash シェルをデフォルトで開くようにします:  #label: VSCode Git bash
+                VSCode >> Terminal >> New Terminal >> ＋の右の↓（シェルの右上）>>
+                    Select Default Profile >> Git bash >> ゴミ箱 ボタン（シェルの右上）
+            Git bash シェルを開きます:
+                VSCode >> Terminal >> New Terminal
+    仮想マシン (VM) を作ります:
+        VM の IP アドレスとポート番号を固有にします:
+            すでに使われている SSH のポート番号を調べます:
+                $HOME/.ssh/config
+            ./port_replace.sh を実行します:  #// ポート番号を開いている番号に置き換えます
+                - chmod +x   ./port_replace.sh  #// 初回のみ
+                - ./port_replace.sh  52    #// 52 を指定すると VM の IP アドレスが 192.168.34.52, VM の SSH が 2352 ポートになります
+        （必要なら）VM のメモリーサイズを変更します:
+            Vagrantfile の一部: |
+                vb.memory = 8192  #// MB
+        install.sh:
+            - chmod +x  ./install.sh  #// 初回のみ
+            - ./install.sh  #// 処理の途中で、ホスト OS の ~/.ssh/config ファイルが編集されます
+                #// Windows ファイヤーウォールが VirsualBox Headless Frontend を許可しようとしたときは、許可します
+                #// 許可しないと Visual Studio Code などから SSH 接続ができなくなります
+        （デバッグする場合）:
+            作る途中の VM のバックアップは、下記にできます:  #search: Vagrant VirtualBox restore
+                Windows >> ${USERPROFILE}/Desktop/VM_back_up
+            install.sh をデバッグする場合:
+                Bash Debug などを使ってデバッグします  #search: Bash Debug
+            Vagrantfile をデバッグする場合:
+                VM のない状態に戻します:
+                    #search: Vagrant from no VM
+                実行します:
+                    vagrant up
+            playbook.yml をデバッグする場合:
+                途中のタスクから実行します:  #search: next ansible-playbook command
+                    - ./run_playbook.sh  "playbook.yml"  --start-at-task  "__TaskName__"  --step  #search: Ansible --start-at-task
+VM の操作:
+    VM を起動します:
+        Vagrant や Ansible をホスト OS から使う場合:
+            - vagrant up
+        使わない場合:
+            - VirtualBox で VM を起動します
+    Visual Studio Code で VM 内のフォルダーを開きます: 
+        VSCode >> Remote Explorer（拡張機能：左）>> Remote（上のプルダウン）>> SSH >> ...
+    VM の電源を切ります:
+        VirtualBox の ACPI シャットダウン、または
+        ./install.sh shutdown
+    VM をバックアップします:
+        ./install.sh backup VM1
+    VM をリストアします:
+        コマンド:
+            ./install.sh restore VM1
+        VirtualBox マネージャーに VM が表示されていない場合:
+            VirtualBox マネージャー >> 仮想マシン >> 追加
+    VM の電源を入れます:  #// VM の仮想的な電源を入れてホストOS と SSH 接続できるようにします
+        #// 現在の VM が電源オフの状態でも中断の状態（ホストOSをシャットダウンした後の状態）でも同じ手順です
+        VSCode でホストOS の Vagrant プロジェクトを開きます:
+            タスクバーの VSCode を右クリック >> __Project__
+        vagrant を起動します:
+            (@host) Git bash:
+                vagrant up
+    ログインします:
+        メニュー: タスクバーの VSCode を右クリック >> vagrant [SSH:__FolderName__]
+        centos7 ノードが開けないとき:
+            ./install.sh port

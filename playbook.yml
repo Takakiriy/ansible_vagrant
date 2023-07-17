@@ -1,0 +1,7 @@
+#// Here is VM back up position (VM0) =======================
+-   hosts: "{{ my_hosts }}"
+    vars_files: [./vars.yml]
+    tasks:
+        -   name: dummy
+            debug:
+                msg: No operation
